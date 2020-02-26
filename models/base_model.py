@@ -19,9 +19,13 @@ class BaseModel(pw.Model):
             return 0
 
     def validate(self):
-        print(
-            f"Warning validation method not implemented for {str(type(self))}")
-        return True
+        from models.user import User
+        duplicate_username = User.get_or_none(User.name == self.name)
+        if duplicate_username:
+            self.errors.append('username is taken!')
+        # print(
+        #     f"Warning validation method not implemented for {str(type(self))}")
+        # return True
 
     class Meta:
         database = db

@@ -19,13 +19,13 @@ def user_create():
     new_user = User(
         name=name_input, email=email_input, password=pass_input)
 
-    try:
-        new_user.save()
+    if new_user.save():
         flash('Successfully signed up!', 'success')
         return redirect(url_for('users.new'))
-    except:
-        flash('failed', 'danger')
-        return redirect(url_for('users.new'))
+    else:
+        for error in new_user.errors:
+            flash(error, 'danger')
+        return render_template('users/new.html', errors=new_user.errors)
 
 
 @users_blueprint.route('/', methods=['POST'])
