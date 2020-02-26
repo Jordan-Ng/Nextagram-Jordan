@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, request, flash, redirect
+from flask import Blueprint, render_template, url_for, request, flash, redirect, session
 from models.user import User
 from werkzeug.security import generate_password_hash
 
@@ -41,9 +41,20 @@ def verif_login():
     username_get = User.get_or_none(User.name == request.form.get('user_name'))
     if username_get and username_get.password == request.form.get('password'):
         flash('you are logged in!', 'success')
-        return redirect(url_for('users.login_page'))
+        session['user'] = username_get.name
+        # return f"<h1>{username_get.name}'s page</h1>"
+        return redirect(url_for('users.prof_show'))
     else:
         flash("username and/or password is incorrect, please try again", "danger")
+        return redirect(url_for('users.login_page'))
+
+# hello
+@users_blueprint.route('/profile', methods=["GET"])
+def prof_show():
+    if "user" in session:
+        user = session['user']
+        return f'<h1>logged in as {user}<h1>'
+    else:
         return redirect(url_for('users.login_page'))
 
 
