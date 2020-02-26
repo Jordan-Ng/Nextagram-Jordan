@@ -19,7 +19,7 @@ class User(BaseModel):
                 'email address is associated with another account!')
         if "@" not in self.email:
             self.errors.append('please enter a valid email')
-        if(string_check.search(self.password) == None):
+        if (string_check.search(self.password) == None):
             self.errors.append(
                 'password must contain at least one special character')
         if len(self.password) <= 6:

@@ -19,7 +19,7 @@ def user_create():
     pass_input = request.form.get('password')
     hashed_pw = generate_password_hash(pass_input)
     new_user = User(
-        name=name_input, email=email_input, password=hashed_pw)
+        name=name_input, email=email_input, password=pass_input)
 
     if new_user.save():
         flash('Successfully signed up!', 'success')
@@ -30,9 +30,21 @@ def user_create():
         return render_template('users/new.html', errors=new_user.errors)
 
 
-@users_blueprint.route('/', methods=['POST'])
-def create():
-    pass
+@users_blueprint.route('/login', methods=['GET'])
+def login_page():
+    return render_template('users/login.html')
+    # pass
+
+
+@users_blueprint.route('/login/verify', methods=['POST'])
+def verif_login():
+    username_get = User.get_or_none(User.name == request.form.get('user_name'))
+    if username_get and username_get.password == request.form.get('password'):
+        flash('you are logged in!', 'success')
+        return redirect(url_for('users.login_page'))
+    else:
+        flash("username and/or password is incorrect, please try again", "danger")
+        return redirect(url_for('users.login_page'))
 
 
 @users_blueprint.route('/<username>', methods=["GET"])
