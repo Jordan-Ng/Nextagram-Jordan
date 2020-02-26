@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, url_for, request, flash, redirect
 from models.user import User
+from werkzeug.security import generate_password_hash
 
 users_blueprint = Blueprint('users',
                             __name__,
@@ -16,8 +17,9 @@ def user_create():
     name_input = request.form.get('user_name')
     email_input = request.form.get('email_address')
     pass_input = request.form.get('password')
+    hashed_pw = generate_password_hash(pass_input)
     new_user = User(
-        name=name_input, email=email_input, password=pass_input)
+        name=name_input, email=email_input, password=hashed_pw)
 
     if new_user.save():
         flash('Successfully signed up!', 'success')
