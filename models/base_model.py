@@ -21,8 +21,12 @@ class BaseModel(pw.Model):
     def validate(self):
         from models.user import User
         duplicate_username = User.get_or_none(User.name == self.name)
+        duplicate_email = User.get_or_none(User.email == self.email)
         if duplicate_username:
             self.errors.append('username is taken!')
+        if duplicate_email:
+            self.errors.append(
+                'email address is associated with another account!')
         # print(
         #     f"Warning validation method not implemented for {str(type(self))}")
         # return True
