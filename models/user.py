@@ -1,6 +1,7 @@
 from models.base_model import BaseModel
 import peewee as pw
 import re
+from werkzeug.security import generate_password_hash
 
 
 class User(BaseModel):
@@ -27,3 +28,5 @@ class User(BaseModel):
         if self.password.isupper() or self.password.islower():
             self.errors.append(
                 'password must be a combination of upper and lower case characters')
+        else:
+            self.password = generate_password_hash(self.password)

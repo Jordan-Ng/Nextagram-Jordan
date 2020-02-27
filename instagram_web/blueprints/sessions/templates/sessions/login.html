@@ -2,7 +2,7 @@
 <div class="row justify-content-center">
   <div class="col-6">
     <h1>Sign In</h1>
-    <form action="{{url_for('users.verif_login')}}" method="post">
+    <form action="{{url_for('sessions.verif_login')}}" method="post">
       <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
       <div class="form-group">
         <label for="user_name">Enter your Username:</label>
