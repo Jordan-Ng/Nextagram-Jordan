@@ -30,3 +30,9 @@ class User(BaseModel):
                 'password must be a combination of upper and lower case characters')
         else:
             self.password = generate_password_hash(self.password)
+
+    def is_authenticated(self):
+        return True
+
+    def is_active(self):
+        return True
