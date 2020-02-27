@@ -39,6 +39,30 @@ def new():
         # return redirect(url_for('sessions.index'))
 
 
+@sessions_blueprint.route('/info')
+@login_required
+def prof_info():
+    if current_user:
+        return render_template('sessions/profinfo.html')
+
+
+@sessions_blueprint.route('/update', methods=['POST'])
+@login_required
+def email_update():
+    new_email = request.form.get('email_address')
+    mod_email = User.update(email=new_email).where(
+        User.name == current_user.name)
+
+    try:
+        # breakpoint()
+        mod_email.execute()
+        flash('email updated successfully', 'success')
+        return redirect(url_for('sessions.new'))
+    except:
+        flash('something went wrong, try again', 'danger')
+        return redirect(url_for('sessions.prof_info'))
+
+
 @sessions_blueprint.route('/end', methods=['GET'])
 def logout():
     # session.pop('user', None)
