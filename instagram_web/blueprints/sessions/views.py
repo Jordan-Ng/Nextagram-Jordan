@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, url_for, request, flash, redirect,
 from werkzeug.security import check_password_hash
 from models.user import User
 from flask_login import login_user, logout_user, current_user, login_required
+# from s3_uploader import upload_file_to_s3
 
 sessions_blueprint = Blueprint('sessions',
                                __name__,
@@ -95,6 +96,17 @@ def logout():
     return redirect(url_for('sessions.index'))
 
 
-@sessions_blueprint.route('/<id>/upload', methods=['POST'])
+@sessions_blueprint.route('/upload', methods=['POST'])
 def profimg_upload():
-    pass
+    if not 'profile_image' in request.files:
+        flash('no image has been provided', 'danger')
+        return redirect(url_for('sessions.prof_info', id=current_user.id))
+
+    # if not upload_file_to_s3(file):
+    #     flash('Oops! Something went wrong while uploading', 'warning')
+    #     return redirect(url_for('sessions.prof_info', id=current_user.id))
+
+    # user = User.get_or_none(User.id == current_user.id)
+    # user.profile_image = file.filename
+
+    # pass

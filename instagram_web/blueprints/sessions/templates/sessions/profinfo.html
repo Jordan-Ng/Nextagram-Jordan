@@ -45,9 +45,16 @@ C/O https://placeholder.com/"
       </div>
       <div class="modal-body">
         <!-- form start -->
-        <form>
-          <input type="file" id="myFile" name="img_name" />
-          <input class="btn btn-primary" type="submit" />
+        <form action="{{url_for('sessions.profimg_upload')}}" method="POST" enctype="multipart/form-data">
+        
+        <label for="user_file">Upload Your File</label>
+        <br></br>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <div class="form-group">
+        <input type="file" name="profile_image">
+        <br></br>
+        <button type="submit">Upload</button>
+        
         </form>
         <!-- form end -->
       </div>
@@ -58,6 +65,7 @@ C/O https://placeholder.com/"
       </div>
     </div>
   </div>
+</div>
 </div>
 <!-- upload image modal end -->
 <h3 class="row justify-content-center mt-sm-3">
