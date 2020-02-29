@@ -11,25 +11,34 @@ class User(BaseModel):
 
     def validate(self):
         duplicate_username = User.get_or_none(User.name == self.name)
+
         duplicate_email = User.get_or_none(User.email == self.email)
+
         string_check = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
-        if duplicate_username:
+
+        if duplicate_username and not duplicate_username.id:
             self.errors.append('username is taken!')
-        if duplicate_email:
+
+        if duplicate_email and not duplicate_email.id:
             self.errors.append(
                 'email address is associated with another account!')
+
         if "@" not in self.email:
             self.errors.append('please enter a valid email')
-        if (string_check.search(self.password) == None):
-            self.errors.append(
-                'password must contain at least one special character')
-        if len(self.password) <= 6:
+
+        # if not self.id and (string_check.search(self.password) == None):
+        #     self.errors.append(
+        #         'password must contain at least one special character')
+        if not self.id and len(self.password) <= 6:
             self.errors.append('password has to be more than 6 characters')
-        if self.password.isupper() or self.password.islower():
+        if not self.id and self.password.isupper():
+            self.errors.append('Password must have upper case.')
+        if not self.id and self.password.islower():
             self.errors.append(
-                'password must be a combination of upper and lower case characters')
+                'Password must have lower case')
         else:
-            self.password = generate_password_hash(self.password)
+            if not self.id:
+                self.password = generate_password_hash(self.password)
 
     def is_authenticated(self):
         return True

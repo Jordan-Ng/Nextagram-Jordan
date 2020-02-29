@@ -80,6 +80,7 @@
       </button>
     </a>
     {% else %}
+    <a class="text-light mr-sm-3">{{currentuser_name}}</a>
     <a href="{{url_for('sessions.logout')}}">
       <button
         class="btn btn-outline-success my-2 my-sm-0 bg-light text-info link"

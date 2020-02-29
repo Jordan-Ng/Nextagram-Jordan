@@ -1,6 +1,6 @@
 {% extends "_layout.html" %} {% block content %}
 <h1>{{current_user.name}}'s Profile</h1>
-<a href="{{url_for('sessions.prof_info')}}">
+<a href="{{url_for('sessions.prof_info', id=current_user.id)}}">
   <button
     class="btn btn-outline-success my-2 my-sm-0 bg-light text-info link mr-sm-3"
     type="submit"
