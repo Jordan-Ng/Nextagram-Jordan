@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, url_for, request, flash, redirect, session
 from werkzeug.security import check_password_hash
+from werkzeug.utils import secure_filename
 from models.user import User
 from flask_login import login_user, logout_user, current_user, login_required
-# from s3_uploader import upload_file_to_s3
-
+from instagram_web.util.s3_uploader import upload_file_to_s3
+# from
 sessions_blueprint = Blueprint('sessions',
                                __name__,
                                template_folder='templates')
@@ -59,7 +60,7 @@ def email_update(id):
 
     query_email = User.get_or_none(User.email == new_email)
     # current_user.email = new_email
-    if not query_email:
+    if not query_email and len(new_email) != 0:
         current_user.save()
         flash("your email was updated successfully!", 'success')
         return redirect(url_for('sessions.new'))
@@ -97,16 +98,30 @@ def logout():
 
 
 @sessions_blueprint.route('/upload', methods=['POST'])
+@login_required
 def profimg_upload():
+    file = request.files.get
+    ('profile_image')
     if not 'profile_image' in request.files:
         flash('no image has been provided', 'danger')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    # if not upload_file_to_s3(file):
-    #     flash('Oops! Something went wrong while uploading', 'warning')
-    #     return redirect(url_for('sessions.prof_info', id=current_user.id))
+    if not upload_file_to_s3(file):
+        # file.filename = secure_filename(file.filename)
+        flash('Oops! Something went wrong while uploading', 'warning')
+        return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    # user = User.get_or_none(User.id == current_user.id)
-    # user.profile_image = file.filename
+    else:
+        flash('upload complete')
+        return redirect(url_for('sessions.prof_info', id=current_user.id))
+
+    # else:
+    #     user = User.get_or_none(User.id == current_user.id)
+    #     user.profile_image = 'chaonimahai'
+
+    #     user.save()
+
+    #     flash('successfully added profile image!', 'success')
+    #     return redirect(url_for('sessions.prof_info', id=current_user.id))
 
     # pass

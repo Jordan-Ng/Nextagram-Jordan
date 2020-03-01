@@ -2,12 +2,17 @@ from models.base_model import BaseModel
 import peewee as pw
 import re
 from werkzeug.security import generate_password_hash
+from playhouse.hybrid import hybrid_property
 
 
 class User(BaseModel):
     name = pw.CharField(null=False, unique=True)
     email = pw.CharField(null=False, unique=True)
     password = pw.CharField(null=False, unique=False)
+    profile_image = pw.CharField(null=True)
+
+    # def profile_image_url(self):
+    #     return f'https://nextagram-jordan.s3.us-east-1.amazonaws.com/{self.profile_image}'
 
     def validate(self):
         duplicate_username = User.get_or_none(User.name == self.name)
