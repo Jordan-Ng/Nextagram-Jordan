@@ -9,12 +9,12 @@ s3 = boto3.client(
 )
 
 
-def upload_file_to_s3(file, acl='public read'):
+def upload_file_to_s3(file, acl='public-read'):
+
     try:
-        # s3.upload_file(
-            # f'/Users/jordanNg/Desktop/amazontest/{file}', 'nextagram-jordan', 'profimg1')
         s3.upload_fileobj(
-            file, Config.AWS_BUCKET_NAME,
+            file,
+            Config.AWS_BUCKET_NAME,
             file.filename,
             ExtraArgs={
                 'ACL': acl,

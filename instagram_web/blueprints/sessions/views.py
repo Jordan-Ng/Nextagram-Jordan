@@ -100,28 +100,27 @@ def logout():
 @sessions_blueprint.route('/upload', methods=['POST'])
 @login_required
 def profimg_upload():
-    file = request.files.get
-    ('profile_image')
+    file = request.files.get('profile_image')
     if not 'profile_image' in request.files:
         flash('no image has been provided', 'danger')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
     if not upload_file_to_s3(file):
-        # file.filename = secure_filename(file.filename)
+        file.filename = secure_filename(file.filename)
         flash('Oops! Something went wrong while uploading', 'warning')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    else:
-        flash('upload complete')
-        return redirect(url_for('sessions.prof_info', id=current_user.id))
-
     # else:
-    #     user = User.get_or_none(User.id == current_user.id)
-    #     user.profile_image = 'chaonimahai'
-
-    #     user.save()
-
-    #     flash('successfully added profile image!', 'success')
+    #     flash('upload complete')
     #     return redirect(url_for('sessions.prof_info', id=current_user.id))
+
+    else:
+        user = User.get_or_none(User.id == current_user.id)
+        user.profile_image = file.filename
+
+        user.save()
+
+        flash('successfully added profile image!', 'success')
+        return redirect(url_for('sessions.prof_info', id=current_user.id))
 
     # pass
