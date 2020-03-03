@@ -12,3 +12,12 @@ class Image(BaseModel):
     @hybrid_property
     def user_image_url(self):
         return(f'https://nextagram-jordan.s3.amazonaws.com/{self.user_img}')
+
+    @hybrid_property
+    def total_donation(self):
+        from models.donations import Donations
+        total = 0
+        for donation in self.donations:
+            total += donation.amount
+
+        return total

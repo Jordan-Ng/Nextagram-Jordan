@@ -11,12 +11,14 @@ header %} {% endblock %} {% block content %}
       alt="Card image cap"
     />
     <div class="card-body">
-      <a href="{{url_for('donations.index')}}">
+      <a href="{{url_for('donations.index', image=imej.id)}}">
         <i class="far fa-money-bill-alt"></i>
       </a>
       <h5 class="card-title">Caption:</h5>
       <p class="card-text">{{imej.caption}}</p>
-      <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+      <p class="card-text">
+        <small class="text-muted">{{imej.total_donation}}</small>
+      </p>
     </div>
   </div>
 </div>
