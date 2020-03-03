@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, url_for, request, flash, redirect,
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from models.user import User
+from models.images import Image
 from flask_login import login_user, logout_user, current_user, login_required
 from instagram_web.util.s3_uploader import upload_file_to_s3
 # from
@@ -32,7 +33,8 @@ def verif_login():
 @login_required
 def new():
     if current_user:
-        return render_template('sessions/new.html', currentuser_name=current_user.name)
+        got_image = Image.select().where(Image.user_id == current_user.id)
+        return render_template('sessions/new.html', currentuser_name=current_user.name, got_image=got_image)
     # if "user" in session:
     #     user = session['user']
     # return f'<h1>logged in as {user}<h1>'
@@ -123,4 +125,25 @@ def profimg_upload():
         flash('successfully added profile image!', 'success')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    # pass
+
+@sessions_blueprint.route('/new/upload', methods=['POST'])
+@login_required
+def usr_img_upload():
+    usr_img = request.files.get('user_image')
+    if not 'user_image' in request.files:
+        flash('no image has been provided', 'danger')
+        return redirect(url_for('sessions.new'))
+
+    if not upload_file_to_s3(usr_img):
+        file.filename = secure_filename(usr_img.filename)
+        flash('Oops! Something went wrong while uploading', 'warning')
+        return redirect(url_for('sessions.new'))
+
+    else:
+        user = User.get_or_none(User.id == current_user.id)
+        caption = request.form.get('img_caption')
+        user_img = Image(
+            user=user.id, user_img=usr_img.filename, caption=caption)
+        user_img.save()
+        flash('Image successfully uploaded!', 'success')
+        return redirect(url_for('sessions.new'))

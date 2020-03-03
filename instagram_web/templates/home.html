@@ -1,12 +1,25 @@
-{% extends "_layout.html" %}
-
-{% block title %}
-  Homepage
-{% endblock %}
-
-{% block header %}
-{% endblock %}
-
-{% block content %}
-  <h1>Homepage</h1>
-{% endblock %}
+{% extends "_layout.html" %} {% block title %} Homepage {% endblock %} {% block
+header %} {% endblock %} {% block content %}
+<!-- <h1>Your Feed:</h1> -->
+{% if current_user.is_authenticated %} {% for imej in all_image %}
+<div class="row justify-content-center mt-sm-3">
+  <div class="card mb-3 col-6" id="cards">
+    <h5 class="card-title mt-sm-2">{{imej.user.name}}</h5>
+    <img
+      class="card-img-top mt-sm-2"
+      src="{{imej.user_image_url}}"
+      alt="Card image cap"
+    />
+    <div class="card-body">
+      <a href="{{url_for('donations.index')}}">
+        <i class="far fa-money-bill-alt"></i>
+      </a>
+      <h5 class="card-title">Caption:</h5>
+      <p class="card-text">{{imej.caption}}</p>
+      <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+    </div>
+  </div>
+</div>
+{% endfor %} {% else %}
+<h1>hmm.. empty..</h1>
+{% endif %} {% endblock %}

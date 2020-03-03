@@ -26,3 +26,7 @@ footer a {
   align-items: center;
   padding: 10px;
 }
+
+#cards {
+  justify-content: center;
+}
