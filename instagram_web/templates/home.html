@@ -17,7 +17,9 @@ header %} {% endblock %} {% block content %}
       <h5 class="card-title">Caption:</h5>
       <p class="card-text">{{imej.caption}}</p>
       <p class="card-text">
-        <small class="text-muted">{{imej.total_donation}}</small>
+        <small class="text-muted"
+          >Total donations: {{imej.total_donation}}</small
+        >
       </p>
     </div>
   </div>

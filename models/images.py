@@ -20,4 +20,4 @@ class Image(BaseModel):
         for donation in self.donations:
             total += donation.amount
 
-        return total
+        return round(total, 2)

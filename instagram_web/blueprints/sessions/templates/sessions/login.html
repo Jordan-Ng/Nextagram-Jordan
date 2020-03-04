@@ -10,7 +10,13 @@
         <label for="password">Enter your Password:</label>
         <input type="password" name="password" class="form-control" />
       </div>
-      <div class="form-group">
+      <div>
+        <!-- change me -->
+        <a href="{{url_for('sessions.google_login')}}">
+          <i class="fab fa-google">Sign in with Google!</i>
+        </a>
+      </div>
+      <div class="form-group mt-sm-2">
         <button class="btn btn-outline-primary">Login!</button>
       </div>
     </form>

@@ -5,6 +5,7 @@ from models.user import User
 from models.images import Image
 from flask_login import login_user, logout_user, current_user, login_required
 from instagram_web.util.s3_uploader import upload_file_to_s3
+from instagram_web.util.google_auth import oauth
 # from
 sessions_blueprint = Blueprint('sessions',
                                __name__,
@@ -89,6 +90,25 @@ def email_update(id):
 # except:
 #     flash('something went wrong, try again', 'danger')
 #     return redirect(url_for('sessions.prof_info'))
+@sessions_blueprint.route('/google_login')
+def google_login():
+    redirect_uri = url_for('sessions.google_auth', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@sessions_blueprint.route('/google_auth')
+def google_auth():
+    access_token = oauth.google.authorize_access_token()
+    email = oauth.google.get(
+        'https://www.googleapis.com/oauth2/v2/userinfo').json()['email']
+    user = User.get_or_none(User.email == email)
+    if user:
+        login_user(user)
+        flash('you are logged in successfully!', 'success')
+        return redirect(url_for('sessions.new'))
+    else:
+        flash('sumting wong', 'danger')
+        return redirect(url_for('sessions.index'))
 
 
 @sessions_blueprint.route('/end', methods=['GET'])

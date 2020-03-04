@@ -13,6 +13,28 @@ class Config(object):
     AWS_BUCKET_NAME = os.getenv('AWS_BUCKET_NAME')
 
 
+class google_config(object):
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    SECRET_KEY = os.environ.get(
+        'SECRET_KEY') or os.urandom(32)
+    ####
+    GOOGLE_CLIENT_ID = os.getenv('CLIENT_ID')
+    GOOGLE_SECRET_KEY = os.getenv('CLIENT_SECRET')
+
+
+class mailgun_config(object):
+    DEBUG = False
+    TESTING = False
+    CSRF_ENABLED = True
+    SECRET_KEY = os.environ.get(
+        'SECRET_KEY') or os.urandom(32)
+    #####
+    MAILGUN_API_KEY = os.getenv('MAILGUN_API_KEY')
+    MAILGUN_DOMAIN_NAME = os.getenv('MAILGUN_DOMAIN_NAME')
+
+
 class ProductionConfig(Config):
     DEBUG = False
     ASSETS_DEBUG = False

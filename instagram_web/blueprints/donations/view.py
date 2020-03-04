@@ -2,7 +2,8 @@ from flask import Blueprint, render_template, url_for, request, flash, redirect
 # from models.user import User
 from models.images import Image
 from models.donations import Donations
-from flask_login import login_required
+from flask_login import login_required, current_user
+from instagram_web.util.mailgun import send_simple_message
 import braintree
 
 donations_blueprint = Blueprint(
@@ -52,6 +53,7 @@ def create_purchase(image_id, user_id):
         donation = Donations(amount=purchase_amount,
                              image=image_id, user=user_id)
         donation.save()
+        send_simple_message(current_user.email)
         flash('donations successfully registered', 'success')
-        return redirect(url_for('sessions.index'))
+        return redirect(url_for('home'))
     return redirect(url_for("donations.index"))
