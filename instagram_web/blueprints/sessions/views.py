@@ -3,6 +3,7 @@ from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from models.user import User
 from models.images import Image
+from models.follows import FollowerFollowing
 from flask_login import login_user, logout_user, current_user, login_required
 from instagram_web.util.s3_uploader import upload_file_to_s3
 from instagram_web.util.google_auth import oauth
@@ -35,7 +36,11 @@ def verif_login():
 def new():
     if current_user:
         got_image = Image.select().where(Image.user_id == current_user.id)
-        return render_template('sessions/new.html', currentuser_name=current_user.name, got_image=got_image)
+        followers = FollowerFollowing.select().where(
+            FollowerFollowing.fan == current_user.id)
+        following = FollowerFollowing.select().where(
+            FollowerFollowing.idol != current_user.id, FollowerFollowing.fan == current_user.id)
+        return render_template('sessions/new.html', currentuser_name=current_user.name, got_image=got_image, followers=followers, following=following)
     # if "user" in session:
     #     user = session['user']
     # return f'<h1>logged in as {user}<h1>'
@@ -43,6 +48,19 @@ def new():
         # return abort()
         # return render_template('403.html')
         # return redirect(url_for('sessions.index'))
+
+
+@sessions_blueprint.route('/user/<id>')
+@login_required
+def user_profile(id):
+    is_followed = FollowerFollowing.get_or_none(
+        fan=current_user.id, idol=id)
+    followers = FollowerFollowing.select().where(FollowerFollowing.fan == id)
+    following = FollowerFollowing.select().where(
+        FollowerFollowing.idol != id, FollowerFollowing.fan == id)
+    target_prof = User.get_or_none(User.id == id)
+    if current_user:
+        return render_template('sessions/user.html', target_prof=target_prof, is_followed=is_followed, followers=followers, following=following)
 
 
 @sessions_blueprint.route('/<id>/info')
