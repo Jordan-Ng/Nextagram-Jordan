@@ -2,8 +2,11 @@ from flask import Blueprint, render_template, url_for, request, flash, redirect,
 from werkzeug.security import check_password_hash
 from werkzeug.utils import secure_filename
 from models.user import User
+from models.images import Image
+from models.follows import FollowerFollowing
 from flask_login import login_user, logout_user, current_user, login_required
 from instagram_web.util.s3_uploader import upload_file_to_s3
+from instagram_web.util.google_auth import oauth
 # from
 sessions_blueprint = Blueprint('sessions',
                                __name__,
@@ -32,7 +35,12 @@ def verif_login():
 @login_required
 def new():
     if current_user:
-        return render_template('sessions/new.html', currentuser_name=current_user.name)
+        got_image = Image.select().where(Image.user_id == current_user.id)
+        followers = FollowerFollowing.select().where(
+            FollowerFollowing.fan == current_user.id)
+        following = FollowerFollowing.select().where(
+            FollowerFollowing.idol != current_user.id, FollowerFollowing.fan == current_user.id)
+        return render_template('sessions/new.html', currentuser_name=current_user.name, got_image=got_image, followers=followers, following=following)
     # if "user" in session:
     #     user = session['user']
     # return f'<h1>logged in as {user}<h1>'
@@ -40,6 +48,19 @@ def new():
         # return abort()
         # return render_template('403.html')
         # return redirect(url_for('sessions.index'))
+
+
+@sessions_blueprint.route('/user/<id>')
+@login_required
+def user_profile(id):
+    is_followed = FollowerFollowing.get_or_none(
+        fan=current_user.id, idol=id)
+    followers = FollowerFollowing.select().where(FollowerFollowing.fan == id)
+    following = FollowerFollowing.select().where(
+        FollowerFollowing.idol != id, FollowerFollowing.fan == id)
+    target_prof = User.get_or_none(User.id == id)
+    if current_user:
+        return render_template('sessions/user.html', target_prof=target_prof, is_followed=is_followed, followers=followers, following=following)
 
 
 @sessions_blueprint.route('/<id>/info')
@@ -87,6 +108,25 @@ def email_update(id):
 # except:
 #     flash('something went wrong, try again', 'danger')
 #     return redirect(url_for('sessions.prof_info'))
+@sessions_blueprint.route('/google_login')
+def google_login():
+    redirect_uri = url_for('sessions.google_auth', _external=True)
+    return oauth.google.authorize_redirect(redirect_uri)
+
+
+@sessions_blueprint.route('/google_auth')
+def google_auth():
+    access_token = oauth.google.authorize_access_token()
+    email = oauth.google.get(
+        'https://www.googleapis.com/oauth2/v2/userinfo').json()['email']
+    user = User.get_or_none(User.email == email)
+    if user:
+        login_user(user)
+        flash('you are logged in successfully!', 'success')
+        return redirect(url_for('sessions.new'))
+    else:
+        flash('sumting wong', 'danger')
+        return redirect(url_for('sessions.index'))
 
 
 @sessions_blueprint.route('/end', methods=['GET'])
@@ -100,28 +140,48 @@ def logout():
 @sessions_blueprint.route('/upload', methods=['POST'])
 @login_required
 def profimg_upload():
-    file = request.files.get
-    ('profile_image')
+    file = request.files.get('profile_image')
     if not 'profile_image' in request.files:
         flash('no image has been provided', 'danger')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
     if not upload_file_to_s3(file):
-        # file.filename = secure_filename(file.filename)
+        file.filename = secure_filename(file.filename)
         flash('Oops! Something went wrong while uploading', 'warning')
         return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    else:
-        flash('upload complete')
-        return redirect(url_for('sessions.prof_info', id=current_user.id))
-
     # else:
-    #     user = User.get_or_none(User.id == current_user.id)
-    #     user.profile_image = 'chaonimahai'
-
-    #     user.save()
-
-    #     flash('successfully added profile image!', 'success')
+    #     flash('upload complete')
     #     return redirect(url_for('sessions.prof_info', id=current_user.id))
 
-    # pass
+    else:
+        user = User.get_or_none(User.id == current_user.id)
+        user.profile_image = file.filename
+
+        user.save()
+
+        flash('successfully added profile image!', 'success')
+        return redirect(url_for('sessions.prof_info', id=current_user.id))
+
+
+@sessions_blueprint.route('/new/upload', methods=['POST'])
+@login_required
+def usr_img_upload():
+    usr_img = request.files.get('user_image')
+    if not 'user_image' in request.files:
+        flash('no image has been provided', 'danger')
+        return redirect(url_for('sessions.new'))
+
+    if not upload_file_to_s3(usr_img):
+        file.filename = secure_filename(usr_img.filename)
+        flash('Oops! Something went wrong while uploading', 'warning')
+        return redirect(url_for('sessions.new'))
+
+    else:
+        user = User.get_or_none(User.id == current_user.id)
+        caption = request.form.get('img_caption')
+        user_img = Image(
+            user=user.id, user_img=usr_img.filename, caption=caption)
+        user_img.save()
+        flash('Image successfully uploaded!', 'success')
+        return redirect(url_for('sessions.new'))

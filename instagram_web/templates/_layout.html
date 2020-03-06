@@ -8,11 +8,16 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
+    <!-- braintree -->
+    <script src="https://js.braintreegateway.com/web/dropin/1.22.1/js/dropin.min.js"></script>
     <link
       rel="shortcut icon"
       href="{{ url_for('static', filename='image/favicon.ico') }}"
     />
+    <script
+      src="https://kit.fontawesome.com/4c4b66e3b7.js"
+      crossorigin="anonymous"
+    ></script>
 
     {% assets "home_css" %}
     <link rel="stylesheet" href="{{ ASSET_URL }}" />

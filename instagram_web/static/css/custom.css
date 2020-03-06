@@ -19,3 +19,58 @@ footer a {
   text-decoration: none;
   color: #303030;
 }
+
+.div-1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+#cards {
+  justify-content: center;
+}
+
+#follow-bar {
+  justify-content: center;
+}
+
+#followers {
+  /* border-left: 2px solid gray; */
+  text-align: end;
+  padding-right: 20px;
+  padding-top: 5px;
+}
+
+.follower-no {
+  /* border: 2px solid black; */
+  padding-right: 50px;
+}
+
+#following {
+  border-left: 2px solid gray;
+  text-align: center;
+  padding-left: 20px;
+  padding-top: 5px;
+}
+
+.following-no {
+  /* border: 2px solid black; */
+  padding-left: 10px;
+}
+
+#follow-unfollow-button {
+  /* border: 2px solid black; */
+  justify-content: flex-end;
+  align-items: center;
+}
+
+#prof-img {
+  /* border: 2px solid black; */
+  padding-left: 50px;
+}
+
+#prof-img-sizing {
+  width: 100px;
+  height: 100px;
+}

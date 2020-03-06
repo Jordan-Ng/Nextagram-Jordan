@@ -1,0 +1,66 @@
+{% extends '_layout.html' %} {% block content %}
+<h1 class="ml-sm-2">{{target_prof.name}} profile</h1>
+<div class="d-flex justify-content-center">
+  {% if target_prof.profile_image%}
+  <div class="col-2">
+    <img
+      class="rounded-circle"
+      src="{{target_prof.prof_image_url}}"
+      alt="prof_img"
+      id="prof-img-sizing"
+    />
+  </div>
+  {%else%}
+  <div class="col-2" id="prof-img">
+    <img
+      class="rounded-circle"
+      src="https://via.placeholder.com/100x100.png?
+  
+  C/O https://placeholder.com/"
+    />
+  </div>
+  {% endif %}
+
+  <div class="col-2" id="followers">
+    <h4>followers</h4>
+    <div class="follower-no">
+      <h5>{{target_prof.fans | length}}</h5>
+    </div>
+  </div>
+  <div class="col-2" , id="following">
+    <h4>following</h4>
+    <div class="following-no">
+      <h5>{{target_prof.idols | length}}</h5>
+    </div>
+  </div>
+  <div class="col-2" , id="following">
+    <h4>Posts</h4>
+    <div class="following-no">
+      <h5>0</h5>
+    </div>
+  </div>
+  <div class="col-3 d-flex" id="follow-unfollow-button">
+    {% if is_followed %}
+    <form action="{{url_for('follows.delete', idol_id=target_prof.id)}}">
+      <button class="btn btn-danger" type="submit">Unfollow</button>
+    </form>
+    {% else %}
+    <form action="{{url_for('follows.create', idol_id=target_prof.id)}}">
+      <button class="btn btn-primary" type="submit">Follow</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+<!-- <div>
+  <h4>
+    followers: {{target_prof.fans | length}}
+  </h4>
+</div>
+<div>
+  <h4>
+    following: {{target_prof.idols | length}}
+  </h4>
+</div> -->
+
+<hr />
+{% endblock %}

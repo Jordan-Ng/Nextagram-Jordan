@@ -2,6 +2,11 @@
 <h1 class="row justify-content-center">
   {{current_user.name}}'s Profile info
 </h1>
+{% if current_user.profile_image %}
+<div class="row justify-content-center">
+  <img class="rounded-circle" src='{{current_user.prof_image_url}}' width='225' height='225' alt='profile_image'/> 
+</div>
+{%else%}
 <div class="row justify-content-center">
   <img
     class="rounded-circle"
@@ -10,6 +15,7 @@
 C/O https://placeholder.com/"
   />
 </div>
+{% endif %}
 <!-- Upload image Modal start -->
 <div class="row justify-content-center mt-sm-2">
   <button

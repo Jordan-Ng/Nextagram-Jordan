@@ -11,9 +11,6 @@ class User(BaseModel):
     password = pw.CharField(null=False, unique=False)
     profile_image = pw.CharField(null=True)
 
-    # def profile_image_url(self):
-    #     return f'https://nextagram-jordan.s3.us-east-1.amazonaws.com/{self.profile_image}'
-
     def validate(self):
         duplicate_username = User.get_or_none(User.name == self.name)
 
@@ -50,3 +47,7 @@ class User(BaseModel):
 
     def is_active(self):
         return True
+
+    @hybrid_property
+    def prof_image_url(self):
+        return(f'https://nextagram-jordan.s3.amazonaws.com/{self.profile_image}')

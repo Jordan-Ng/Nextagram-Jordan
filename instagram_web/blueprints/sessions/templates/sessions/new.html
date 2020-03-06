@@ -1,13 +1,98 @@
 {% extends "_layout.html" %} {% block content %}
-<h1>{{current_user.name}}'s Profile</h1>
-<a href="{{url_for('sessions.prof_info', id=current_user.id)}}">
-  <button
-    class="btn btn-outline-success my-2 my-sm-0 bg-light text-info link mr-sm-3"
-    type="submit"
-  >
-    <span class="button--inner">Your Profile information</span>
+<div class="div-1">
+  <h1 class="ml-sm-2">{{currentuser_name}}'s Profile</h1>
+<div>
+  <a href="{{url_for('sessions.prof_info', id=current_user.id)}}">
+    <button
+      class="btn btn-outline-success my-2 my-sm-0 bg-light text-info link mr-sm-3 "
+      type="submit"
+    >
+      <span class="button--inner">Your Profile information</span>
+    </button>
+  </a>
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal1">
+    Upload Image
   </button>
-</a>
-<!-- test modal -->
+</div>
+</div>
+<div class="d-flex justify-content-center">
+<div class="col-2" id="followers">
+  <h4>followers</h4>
+  <div class="follower-no">
+    <h5>{{followers | length}}</h5>
+  </div>
+</div>
+<div class="col-2" , id="following">
+  <h4>following</h4>
+  <div class="following-no">
+    <h5>{{following | length}}</h5>
+  </div>
+</div>
+<div class="col-2" , id="following">
+  <h4>Posts</h4>
+  <div class="following-no">
+    <h5>0</h5>
+  </div>
+</div>
+</div>
+<!-- <div id='follow-bar'>
+  <h4>Following: {{following | length}}</h4>
+  <h4>Followers: {{followers | length}}</h4>
+</div> -->
+<!-- user image modal -->
+<!-- <div class="row m-sm-2"> -->
+<hr class="ml-sm-4 mr-sm-4"/>
+{% if got_image %}
+{% for img in got_image %}
+  <div class="row justify-content-center">
+  <!-- <h1>steadybompipi</h1> -->
+  <div class="card mb-3 col-6" id="cards">
+    <img class="card-img-top mt-sm-3" src="{{img.user_image_url}}" alt="Card image cap" >
+    <div class="card-body">
+      <h5 class="card-title">Caption:</h5>
+      <p class="card-text">{{img.caption}}</p>
+      <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+    </div>
+  </div>
+</div>
+{% endfor%}
+{% endif %}
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Choose Your Image</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- form start -->
+        <form action="{{url_for('sessions.usr_img_upload')}}" method="POST" enctype="multipart/form-data">
+
+          <label for="user_file">Upload Your File</label>
+          <br></br>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="form-group">
+            <input type="file" name="user_image">
+            <br></br>
+            <button type="submit">Upload</button>
+                <div>
+                <label for="user_name">Caption:</label>
+                <input type="text" name="img_caption" class="form-control" />
+                </div>
+
+        </form>
+        <!-- form end -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+    <!-- modal end -->
 
 {% endblock %}
